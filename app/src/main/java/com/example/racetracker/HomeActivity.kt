@@ -9,42 +9,37 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-
-//factory design pattern
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
-    lateinit var homeTv:TextView
+    lateinit var countTv:TextView      //observer
     lateinit var viewModel:HomeViewModel
 
-    //made textview as an observer
-    var secsObserverphno: Observer<Int> = object : Observer<Int> {
-        override fun onChanged(seconds: Int) {
-            //receiving the update/notification
-            homeTv.setText(seconds.toString())
-        }
-    }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-        //this is not instantiating homeviewmodel
+        countTv = findViewById(R.id.tvHome)
 
-        viewModel._seconds.observe(this, secsObserverphno);
-        //me giving my phno to the postman
+        lifecycleScope.launch {
+            viewModel.seconds.collectLatest { seconds ->
+                countTv.text = seconds.toString()  // Updating UI
+            }
+        }
 
 
 
-        homeTv = findViewById(R.id.tvHome)
-        homeTv.setText(""+viewModel._seconds)
-
+        // countTv.setText(""+viewModel.seconds)
     }
 
     fun incrementCount(view: View) {
-        // viewModel.incrementCounter()
         viewModel.startTimer()
-        homeTv.setText(""+viewModel._seconds)
-
     }
+
+
 }

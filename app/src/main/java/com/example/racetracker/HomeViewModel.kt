@@ -5,32 +5,31 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-//viewmodel will hold the data for ui as well as the biz logic
-//view=UI and model=data
-class HomeViewModel:ViewModel() {
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 
+//data holder-- biz logic
+class HomeViewModel : ViewModel(){
     var TAG = HomeViewModel::class.java.simpleName
 
-    lateinit var timer: CountDownTimer
 
+    lateinit var timer: CountDownTimer
+    //i don't  want _seconds to be changed from outside this class
+    private val _seconds = MutableStateFlow(0)
+
+    // Publicly exposed StateFlow (read-only)
+    val seconds: StateFlow<Int> = _seconds
+
+    // Function to update the seconds value
+    fun updateSeconds(value: Int) {
+        _seconds.value = value
+    }
 
     var count = 0
 
-    //made seconds as observable
-    //seconds is a public variable which can't be changed & _seconds is a private variable which can be channged within the class
-   //this approach of having one changeable private  variable and other unchangeable public variable is known as backing property in kotlin
-    val _seconds = MutableLiveData<Int>()//mutable = changed
-
-  //  val seconds:LiveData<Int> = _seconds.ge
-
-
     fun incrementCounter(){
         count++
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.i("homeviewmodel","viewmodel was flushed")
     }
 
     fun startTimer(){
@@ -48,5 +47,12 @@ class HomeViewModel:ViewModel() {
 
         }.start()
     }
+
+
+
+    override fun onCleared() {
+        super.onCleared()
+    }
+
 
 }
