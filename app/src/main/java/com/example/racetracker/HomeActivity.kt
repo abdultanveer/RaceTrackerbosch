@@ -7,22 +7,28 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 
 class HomeActivity : AppCompatActivity() {
-    var count = 0
     lateinit var homeTv:TextView
+    lateinit var viewModel:HomeViewModel
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+
+
         homeTv = findViewById(R.id.tvHome)
-        homeTv.setText(""+count)
+        homeTv.setText(""+viewModel.count)
 
     }
 
     fun incrementCount(view: View) {
-        count++
-        homeTv.setText(""+count)
+         viewModel.incrementCounter()
+        homeTv.setText(""+viewModel.count)
 
     }
 }
